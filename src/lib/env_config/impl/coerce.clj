@@ -12,7 +12,8 @@
 (defn boolean-coercer [_path val]
   (condp = (string/lower-case val)
     "true" (->Coerced true)
-    "false" (->Coerced false)))
+    "false" (->Coerced false)
+    nil))
 
 (defn integer-coercer [_path val]
   (try
