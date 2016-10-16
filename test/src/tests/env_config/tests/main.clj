@@ -57,7 +57,7 @@
                              :k  'sym
                              :l  "#!@#xxx"
                              :m  "\\\\x"
-                             :n  "~#!@#xxx"
+                             ; :n should be omitted due to eval error
                              :o  "true"
                              :z1 {:z2 {:z3 "nested"}}}]
       (is (= expected-coercion (coerce-config config))))))
@@ -80,3 +80,13 @@
         {"project/coerce-me" "42"} {:coerce-me "!42"}
         {"project/coerce-me/x" "1"} {:coerce-me {:x "!1"}}
         {"project/coerce-me/x/y" "s"} {:coerce-me {:x {:y "!s"}}}))))
+
+(deftest test-problems
+  (testing "invalid code"
+    (is (= {} (make-config "p" {"p/c" "~#!@#xxx"})))))
+
+(deftest test-make-config-with-logging
+  (testing "make-config-with-logging"
+    (let [reports-atom (atom [])]
+      (make-config-with-logging "p" {"p/c" "~#!@#xxx"} default-coercers (fn [reports] (reset! reports-atom reports)))
+      (is (= [[:warn "env-config: unable to read-string for config path [:c], invalid code: '#!@#xxx', problem: EOF while reading."]] @reports-atom)))))
