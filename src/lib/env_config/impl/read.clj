@@ -1,6 +1,7 @@
 (ns env-config.impl.read
   (:require [clojure.string :as string]
-            [env-config.impl.report :as report]))
+            [env-config.impl.report :as report]
+            [env-config.impl.helpers :refer [make-var-description]]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
@@ -27,26 +28,33 @@
   (assert (string/starts-with? name prefix))
   (.substring name (count prefix)))
 
-(defn get-maps-only [m k]
-  (let [v (get m k)]
-    (if (map? v)                                                                                                              ; TODO: issue a warning when overwriting previous non-map value?
-      v)))
-
-(defn overwriting-assoc-in [m [k & ks] v]
-  (if ks
-    (assoc m k (overwriting-assoc-in (get-maps-only m k) ks v))
-    (assoc m k v)))
+(defn report-naming-conflict! [item1 item2]
+  (report/report-warning! (str "naming conflict: the " (make-var-description (meta item1)) " "
+                               "was shadowed by the " (make-var-description (meta item2)) ". "
+                               "A variable name must not be a prefix of another variable name.")))
 
 ; -- reducers ---------------------------------------------------------------------------------------------------------------
 
-(defn filterer-for-matching-vars [prefix v var-name var-value]
+(defn filterer-for-matching-vars [prefix state var-name var-value]
   (or
     (let [prefix+name (canonical-name var-name)]
       (if (matching-var-name? prefix prefix+name)
         (let [value (normalize-value var-value)
               name (strip-prefix prefix prefix+name)]
-          (conj v (with-meta [name value] {:var-name var-name :var-value var-value})))))
-    v))
+          (conj state (with-meta [name value] {:var-name var-name :var-value var-value})))))
+    state))
+
+(defn common-prefix? [s prefix]
+  (if (some? prefix)
+    (string/starts-with? s (str prefix "/"))))
+
+(defn filterer-for-naming-conflicts [state item]
+  (let [prev-item (last state)]
+    (if (common-prefix? (first item) (first prev-item))
+      (do
+        (report-naming-conflict! prev-item item)
+        (conj (vec (butlast state)) item))
+      (conj state item))))
 
 (defn config-builder
   ([] {})
@@ -54,8 +62,8 @@
    (let [[name value] item]
      (let [segments (get-name-segments name)
            ks (map name-to-keyword segments)
-           new-config (overwriting-assoc-in config ks value)
-           new-metadata (overwriting-assoc-in (meta config) ks (meta item))]
+           new-config (assoc-in config ks value)
+           new-metadata (assoc-in (meta config) ks (meta item))]
        (with-meta new-config new-metadata)))))
 
 ; -- reader -----------------------------------------------------------------------------------------------------------------
@@ -65,6 +73,7 @@
     (->> vars
          (reduce-kv (partial filterer-for-matching-vars canonical-prefix) [])
          (sort-by first)                                                                                                      ; we want lexicographical sorting, longer (nested) names overwrite shorter ones
+         (reduce filterer-for-naming-conflicts [])
          (reduce config-builder {}))))
 
 (defn read-config [prefix vars]

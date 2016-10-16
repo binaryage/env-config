@@ -62,7 +62,7 @@
                              :z1 {:z2 {:z3 "nested"}}}]
       (is (= expected-coercion (coerce-config config))))))
 
-(deftest test-to-level-api
+(deftest test-top-level-api
   (testing "make-config"
     (are [vars config] (= config (make-config "project" vars))
       {"project/var" "42"} {:var 42}
@@ -79,14 +79,22 @@
         {"project/dont-coerce-me" "42"} {:dont-coerce-me "42"}
         {"project/coerce-me" "42"} {:coerce-me "!42"}
         {"project/coerce-me/x" "1"} {:coerce-me {:x "!1"}}
-        {"project/coerce-me/x/y" "s"} {:coerce-me {:x {:y "!s"}}}))))
-
-(deftest test-problems
-  (testing "invalid code"
-    (is (= {} (make-config "p" {"p/c" "~#!@#xxx"})))))
-
-(deftest test-make-config-with-logging
+        {"project/coerce-me/x/y" "s"} {:coerce-me {:x {:y "!s"}}})))
   (testing "make-config-with-logging"
     (let [reports-atom (atom [])]
       (make-config-with-logging "p" {"p/c" "~#!@#xxx"} default-coercers (fn [reports] (reset! reports-atom reports)))
       (is (= [[:warn "env-config: unable to read-string from variable 'p/c' with value \"~#!@#xxx\", attempted to eval code: '#!@#xxx', got problem: EOF while reading."]] @reports-atom)))))
+
+(deftest test-problems
+  (testing "invalid code"
+    (is (= {} (make-config "p" {"p/c" "~#!@#xxx"}))))
+  (testing "naming conflicts"
+    (let [reports (atom [])
+          vars {"p/a"     "1"
+                "p/a/b"   "2"
+                "p/a/b/c" "3"}
+          expected {:a {:b {:c 3}}}
+          errors [[:warn "env-config: naming conflict: the variable 'p/a' with value \"1\" was shadowed by the variable 'p/a/b' with value \"2\". A variable name must not be a prefix of another variable name."]
+                  [:warn "env-config: naming conflict: the variable 'p/a/b' with value \"2\" was shadowed by the variable 'p/a/b/c' with value \"3\". A variable name must not be a prefix of another variable name."]]]
+      (is (= expected (make-config "p" vars default-coercers reports)))
+      (is (= errors @reports)))))
