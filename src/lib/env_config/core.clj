@@ -1,11 +1,12 @@
 (ns env-config.core
   (:require [env-config.impl.read :as read]
             [env-config.impl.coerce :as coerce]
+            [env-config.impl.coercers :as coercers]
             [env-config.impl.report :as report]))
 
 ; -- public api -------------------------------------------------------------------------------------------------------------
 
-(def default-coercers coerce/default-coercers)
+(def default-coercers coercers/default-coercers)
 
 (defn read-config [prefix vars]
   (read/read-config prefix vars))

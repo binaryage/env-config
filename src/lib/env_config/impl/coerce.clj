@@ -5,69 +5,17 @@
 
 (deftype Coerced [val])
 
-; -- standard coercers ------------------------------------------------------------------------------------------------------
+; -- coercion machinery -----------------------------------------------------------------------------------------------------
 
-(defn nil-coercer [_path val]
-  (if (= (string/lower-case val) "nil")
-    (->Coerced nil)))
-
-(defn boolean-coercer [_path val]
-  (condp = (string/lower-case val)
-    "true" (->Coerced true)
-    "false" (->Coerced false)
-    nil))
-
-(defn integer-coercer [_path val]
-  (try
-    (->Coerced (Integer/parseInt val))
-    (catch NumberFormatException e)))
-
-(defn double-coercer [_path val]
-  (try
-    (->Coerced (Double/parseDouble val))
-    (catch NumberFormatException e)))
-
-(defn keyword-coercer [_path val]
-  (if (string-starts-with? val ":")
-    (->Coerced (keyword (.substring val 1)))))
-
-(defn symbol-coercer [_path val]
-  (if (string-starts-with? val "'")
-    (->Coerced (symbol (.substring val 1)))))
-
-(defn code-coercer [path val]
-  (if (string-starts-with? val "~")
-    (let [code (.substring val 1)]
-      (try
-        (->Coerced (read-string code))                                                                                        ; TODO: should we rather use edn/read-string here?
-        (catch Throwable e
-          (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
-                                       "attempted to eval code: '" code "', "
-                                       "got problem: " (.getMessage e) "."))
-          :omit)))))
-
-; -- default coercers -------------------------------------------------------------------------------------------------------
-
-(def default-coercers
-  [nil-coercer
-   boolean-coercer
-   integer-coercer                                                                                                            ; must go before double-coercer
-   double-coercer
-   keyword-coercer
-   symbol-coercer
-   code-coercer])
-
-; -- coercer machinery ------------------------------------------------------------------------------------------------------
-
-(defn valid-result? [result]
-  (or (nil? result)
-      (= :omit result)
-      (instance? Coerced result)))
+(defn valid-coercion-result? [result]
+  (or (nil? result)                                                                                                           ; this means "not interested"
+      (= :omit result)                                                                                                        ; this means "ignore value because of an error"
+      (instance? Coerced result)))                                                                                            ; this wraps coercion result
 
 (defn coerce [path val coercer]
   (try
     (let [result (coercer path val)]
-      (if (valid-result? result)
+      (if (valid-coercion-result? result)
         result
         (throw (ex-info (str "coercer returned an unexpected result: " result " (" (type result) "), "
                              "allowed are nil, :omit and Coerced instances") {}))))
@@ -79,7 +27,7 @@
     (if (= :omit result)
       ::omit
       (.val result))
-    val))
+    val))                                                                                                                     ; when no coercer applies, we return it as a string value
 
 (defn push-key [state key]
   (update state :keys conj key))
@@ -90,7 +38,7 @@
 (defn restore-keys [state keys]
   (assoc state :keys keys))
 
-(defn coercer-worker [coercers state key val]
+(defn coercion-worker [coercers state key val]
   (if (map? val)
     (let [current-keys (store-keys state)
           new-state (reduce-kv (:reducer state) (push-key state key) val)]
@@ -105,7 +53,7 @@
 ; -- coercer ----------------------------------------------------------------------------------------------------------------
 
 (defn naked-coerce-config [config coercers]
-  (let [reducer (partial coercer-worker coercers)
+  (let [reducer (partial coercion-worker coercers)
         init {:keys     []
               :reducer  reducer
               :metadata (meta config)
