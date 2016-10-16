@@ -1,5 +1,7 @@
 (ns env-config.impl.coerce
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [env-config.impl.report :as report]
+            [env-config.impl.helpers :refer [dissoc-in]]))
 
 (deftype Coerced [val])
 
@@ -33,11 +35,16 @@
   (if (string/starts-with? val "'")
     (->Coerced (symbol (.substring val 1)))))
 
-(defn code-coercer [_path val]
+(defn code-coercer [path val]
   (if (string/starts-with? val "~")
-    (try
-      (->Coerced (read-string (.substring val 1)))                                                                            ; TODO: should we rather use edn/read-string here?
-      (catch Throwable e))))
+    (let [code (.substring val 1)]
+      (try
+        (->Coerced (read-string code))                                                                                        ; TODO: should we rather use edn/read-string here?
+        (catch Throwable e
+          (report/report-warning! (str "unable to read-string for config path " (pr-str path) ", "
+                                       "invalid code: '" code "', "
+                                       "problem: " (.getMessage e) "."))
+          :omit)))))
 
 ; -- default coercers -------------------------------------------------------------------------------------------------------
 
@@ -96,9 +103,15 @@
 
 ; -- coercer ----------------------------------------------------------------------------------------------------------------
 
-(defn coerce-config [config coercers]
+(defn naked-coerce-config [config coercers]
   (let [reducer (partial coercer-worker coercers)
         init {:keys    []
               :reducer reducer
               :config  {}}]
     (:config (reduce-kv reducer init config))))
+
+(defn coerce-config [config coercers]
+  (try
+    (naked-coerce-config config coercers)
+    (catch Throwable e
+      (report/report-error! (str "internal error in coerce-config: " (.getMessage e))))))

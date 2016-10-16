@@ -1,5 +1,6 @@
 (ns env-config.impl.read
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [env-config.impl.report :as report]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
@@ -58,9 +59,15 @@
 
 ; -- reader -----------------------------------------------------------------------------------------------------------------
 
-(defn read-config [prefix vars]
+(defn naked-read-config [prefix vars]
   (let [canonical-prefix (str (canonical-name prefix) "/")]
     (->> vars
          (reduce-kv (partial filterer-for-matching-vars canonical-prefix) [])
          (sort-by first)                                                                                                      ; we want lexicographical sorting, longer (nested) names overwrite shorter ones
          (reduce config-builder {}))))
+
+(defn read-config [prefix vars]
+  (try
+    (naked-read-config prefix vars)
+    (catch Throwable e
+      (report/report-error! (str "internal error in read-config: " (.getMessage e))))))
