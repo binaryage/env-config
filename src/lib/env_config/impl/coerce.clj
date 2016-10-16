@@ -52,16 +52,26 @@
 
 ; -- coercer machinery ------------------------------------------------------------------------------------------------------
 
+(defn valid-result? [result]
+  (or (nil? result)
+      (= :omit result)
+      (instance? Coerced result)))
+
 (defn coerce [path val coercer]
   (try
-    (when-let [result (coercer path val)]
-      (assert (instance? Coerced result))
-      result)
-    (catch Throwable e)))                                                                                                     ; TODO: we should not swallow exceptions, but report it somehow
+    (let [result (coercer path val)]
+      (if (valid-result? result)
+        result
+        (throw (ex-info (str "coercer returned an unexpected result: " result " (" (type result) "), "
+                             "allowed are nil, :omit and Coerced instances") {}))))
+    (catch Throwable e
+      (report/report-error! (str "problem with coercer " coercer ": " (.getMessage e) ".")))))
 
 (defn apply-coercers [coercers path val]
   (if-let [result (some (partial coerce path val) coercers)]
-    (.val result)
+    (if (= :omit result)
+      ::omit
+      (.val result))
     val))
 
 (defn push-key [state key]
@@ -80,7 +90,9 @@
       (restore-keys new-state current-keys))
     (let [path (conj (:keys state) key)
           coerced-val (apply-coercers coercers path val)]
-      (update state :config assoc-in path coerced-val))))
+      (if (= ::omit coerced-val)
+        (update state :config dissoc-in path)
+        (update state :config assoc-in path coerced-val)))))
 
 ; -- coercer ----------------------------------------------------------------------------------------------------------------
 
