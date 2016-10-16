@@ -15,3 +15,8 @@
           (assoc m k v)))
       (dissoc m k))
     m))
+
+(defn ^:dynamic make-var-description [var-meta]
+  (let [orig-name (or (:var-name var-meta) "?")
+        orig-value (:var-value var-meta)]
+    (str "variable '" orig-name "' with value " (pr-str orig-value))))
