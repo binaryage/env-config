@@ -20,3 +20,9 @@
   (let [orig-name (or (:var-name var-meta) "?")
         orig-value (:var-value var-meta)]
     (str "variable '" orig-name "' with value " (pr-str orig-value))))
+
+; for Clojure 1.7
+(defn string-starts-with?
+  "True if s starts with substr."
+  [^CharSequence s ^String substr]
+  (.startsWith (.toString s) substr))

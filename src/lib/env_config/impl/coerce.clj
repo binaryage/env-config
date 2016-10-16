@@ -1,7 +1,7 @@
 (ns env-config.impl.coerce
   (:require [clojure.string :as string]
             [env-config.impl.report :as report]
-            [env-config.impl.helpers :refer [dissoc-in make-var-description]]))
+            [env-config.impl.helpers :refer [dissoc-in make-var-description string-starts-with?]]))
 
 (deftype Coerced [val])
 
@@ -28,15 +28,15 @@
     (catch NumberFormatException e)))
 
 (defn keyword-coercer [_path val]
-  (if (string/starts-with? val ":")
+  (if (string-starts-with? val ":")
     (->Coerced (keyword (.substring val 1)))))
 
 (defn symbol-coercer [_path val]
-  (if (string/starts-with? val "'")
+  (if (string-starts-with? val "'")
     (->Coerced (symbol (.substring val 1)))))
 
 (defn code-coercer [path val]
-  (if (string/starts-with? val "~")
+  (if (string-starts-with? val "~")
     (let [code (.substring val 1)]
       (try
         (->Coerced (read-string code))                                                                                        ; TODO: should we rather use edn/read-string here?

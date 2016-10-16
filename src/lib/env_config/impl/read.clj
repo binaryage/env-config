@@ -1,7 +1,7 @@
 (ns env-config.impl.read
   (:require [clojure.string :as string]
             [env-config.impl.report :as report]
-            [env-config.impl.helpers :refer [make-var-description]]))
+            [env-config.impl.helpers :refer [make-var-description string-starts-with?]]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
@@ -22,10 +22,10 @@
   (string/split name #"/"))
 
 (defn matching-var-name? [prefix name]
-  (string/starts-with? name prefix))
+  (string-starts-with? name prefix))
 
 (defn strip-prefix [prefix name]
-  (assert (string/starts-with? name prefix))
+  (assert (string-starts-with? name prefix))
   (.substring name (count prefix)))
 
 (defn report-naming-conflict! [item1 item2]
@@ -46,7 +46,7 @@
 
 (defn common-prefix? [s prefix]
   (if (some? prefix)
-    (string/starts-with? s (str prefix "/"))))
+    (string-starts-with? s (str prefix "/"))))
 
 (defn filterer-for-naming-conflicts [state item]
   (let [prev-item (last state)]
