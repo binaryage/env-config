@@ -20,11 +20,6 @@
     (swap! *reports* conj [:error (apply-prefix message)]))
   nil)
 
-(defn report-info! [message]
-  (if *reports*
-    (swap! *reports* conj [:info (apply-prefix message)]))
-  nil)
-
 ; -- standard logging -------------------------------------------------------------------------------------------------------
 
 (defn log-reports-if-needed! [reports & [reporter]]
