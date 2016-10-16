@@ -4,7 +4,7 @@
   :license {:name         "MIT License"
             :url          "http://opensource.org/licenses/MIT"
             :distribution :repo}
- :scm {:name "git"
+  :scm {:name "git"
         :url  "https://github.com/binaryage/env-config"}
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha13" :scope "provided"]
@@ -25,14 +25,15 @@
   :profiles {:nuke-aliases
              {:aliases ^:replace {}}
 
-             :dev {:plugins [[com.jakemccrary/lein-test-refresh "0.17.0"]]}
+             :dev
+             {:plugins [[com.jakemccrary/lein-test-refresh "0.17.0"]]}
 
              :lib
              ^{:pom-scope :provided}                                                                                          ; ! to overcome default jar/pom behaviour, our :dependencies replacement would be ignored for some reason
              [:nuke-aliases
               {:dependencies   ~(let [project-str (or
                                                     (try (slurp "project.clj") (catch Throwable _ nil))
-                                                    (try (slurp "/Users/darwin/code/cljs-devtools/project.clj") (catch Throwable _ nil)))
+                                                    (try (slurp "/Users/darwin/code/env-config/project.clj") (catch Throwable _ nil)))
                                       project (->> project-str read-string (drop 3) (apply hash-map))
                                       test-dep? #(->> % (drop 2) (apply hash-map) :scope (= "test"))
                                       non-test-deps (remove test-dep? (:dependencies project))]
@@ -42,17 +43,20 @@
                :test-paths     ^:replace []}]
 
              :clojure18
-             {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
-                             [clojure-future-spec "1.9.0-alpha13" :scope "provided"]]}}
+             {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]]}
 
-  :aliases {"install" ["do"
-                       ["shell" "scripts/prepare-jar.sh"]
-                       ["shell" "scripts/local-install.sh"]]
-            "jar"     ["shell" "scripts/prepare-jar.sh"]
-            "deploy"  ["shell" "scripts/deploy-clojars.sh"]
-            "release" ["do"
-                       ["clean"]
-                       ["shell" "scripts/check-versions.sh"]
-                       ["shell" "scripts/prepare-jar.sh"]
-                       ["shell" "scripts/check-release.sh"]
-                       ["shell" "scripts/deploy-clojars.sh"]]})
+             :clojure17
+             {:dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]]}}
+
+  :aliases {"install"  ["do"
+                        ["shell" "scripts/prepare-jar.sh"]
+                        ["shell" "scripts/local-install.sh"]]
+            "test-all" ["shell" "scripts/test-all.sh"]
+            "jar"      ["shell" "scripts/prepare-jar.sh"]
+            "deploy"   ["shell" "scripts/deploy-clojars.sh"]
+            "release"  ["do"
+                        ["clean"]
+                        ["shell" "scripts/check-versions.sh"]
+                        ["shell" "scripts/prepare-jar.sh"]
+                        ["shell" "scripts/check-release.sh"]
+                        ["shell" "scripts/deploy-clojars.sh"]]})
