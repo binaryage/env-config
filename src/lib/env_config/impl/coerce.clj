@@ -1,7 +1,7 @@
 (ns env-config.impl.coerce
   (:require [clojure.string :as string]
             [env-config.impl.report :as report]
-            [env-config.impl.helpers :refer [dissoc-in]]))
+            [env-config.impl.helpers :refer [dissoc-in make-var-description]]))
 
 (deftype Coerced [val])
 
@@ -41,9 +41,9 @@
       (try
         (->Coerced (read-string code))                                                                                        ; TODO: should we rather use edn/read-string here?
         (catch Throwable e
-          (report/report-warning! (str "unable to read-string for config path " (pr-str path) ", "
-                                       "invalid code: '" code "', "
-                                       "problem: " (.getMessage e) "."))
+          (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
+                                       "attempted to eval code: '" code "', "
+                                       "got problem: " (.getMessage e) "."))
           :omit)))))
 
 ; -- default coercers -------------------------------------------------------------------------------------------------------
@@ -96,7 +96,8 @@
           new-state (reduce-kv (:reducer state) (push-key state key) val)]
       (restore-keys new-state current-keys))
     (let [path (conj (:keys state) key)
-          coerced-val (apply-coercers coercers path val)]
+          metadata (get-in (:metadata state) path)
+          coerced-val (apply-coercers coercers (with-meta path metadata) val)]
       (if (= ::omit coerced-val)
         (update state :config dissoc-in path)
         (update state :config assoc-in path coerced-val)))))
@@ -105,9 +106,10 @@
 
 (defn naked-coerce-config [config coercers]
   (let [reducer (partial coercer-worker coercers)
-        init {:keys    []
-              :reducer reducer
-              :config  {}}]
+        init {:keys     []
+              :reducer  reducer
+              :metadata (meta config)
+              :config   {}}]
     (:config (reduce-kv reducer init config))))
 
 (defn coerce-config [config coercers]

@@ -37,11 +37,6 @@
     (assoc m k (overwriting-assoc-in (get-maps-only m k) ks v))
     (assoc m k v)))
 
-(defn assoc-config-value [m name value]
-  (let [segments (get-name-segments name)
-        ks (map name-to-keyword segments)]
-    (overwriting-assoc-in m ks value)))
-
 ; -- reducers ---------------------------------------------------------------------------------------------------------------
 
 (defn filterer-for-matching-vars [prefix v var-name var-value]
@@ -50,12 +45,18 @@
       (if (matching-var-name? prefix prefix+name)
         (let [value (normalize-value var-value)
               name (strip-prefix prefix prefix+name)]
-          (conj v [name value]))))
+          (conj v (with-meta [name value] {:var-name var-name :var-value var-value})))))
     v))
 
 (defn config-builder
   ([] {})
-  ([m [name value]] (assoc-config-value m name value)))
+  ([config item]
+   (let [[name value] item]
+     (let [segments (get-name-segments name)
+           ks (map name-to-keyword segments)
+           new-config (overwriting-assoc-in config ks value)
+           new-metadata (overwriting-assoc-in (meta config) ks (meta item))]
+       (with-meta new-config new-metadata)))))
 
 ; -- reader -----------------------------------------------------------------------------------------------------------------
 
