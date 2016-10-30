@@ -1,4 +1,4 @@
-(defproject binaryage/env-config "0.1.1"
+(defproject binaryage/env-config "0.1.2-SNAPSHOT"
   :description "Clojure(Script) library for config map overrides via environment variables."
   :url "https://github.com/binaryage/env-config"
   :license {:name         "MIT License"
