@@ -15,7 +15,7 @@
                 "My_Project/A1/B2"   "overwrite"
                 "My_project/A1"      "should-not-destroy-subkeys"
                 "MY_PROJECT__A1__B3" "double-underscore"
-                "MY_PROJECT__A1__B4" "double-dash"}
+                "MY_PROJECT--A1-_B4" "double-dash/mixed-dash-underscore"}
           expected-config {:a    "s"
                            :b    "42"
                            :c-cx "normalize key"
@@ -23,7 +23,7 @@
                            :a1   {:b1 ":nested-key"
                                   :b2 "overwrite"
                                   :b3 "double-underscore"
-                                  :b4 "double-dash"}}]
+                                  :b4 "double-dash/mixed-dash-underscore"}}]
       (is (= expected-config (read-config "my-project" vars)))))
   (testing "nested prefix"
     (is (= {:v "1"} (read-config "project/sub-project/x/y" {"project/sub-project/x/y/v" "1"
