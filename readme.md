@@ -11,10 +11,10 @@ This is useful for library authors who want to add some flexibility how they lib
 ## Intro
 
 Usually library configuration is achieved via a config map specifying keywords with individual config values.
-This config map can be provided directly passed via an api call, or via build configuration or some other means. 
+This config map can be provided directly (e.g. passed via an api call), via a build configuration or by some other means. 
 For example in ClojureScript it could be passed via `:compiler > :external-config`.
 
-Sometimes, for ad-hoc tweaks, it would be preferable to be able to override config values 
+Sometimes for ad-hoc tweaks it would be preferable to be able to override config values 
 by defining environment variables instead of touching build tool configuration (which is usually under source control).
 
 This library helps you do that consistently:
@@ -28,7 +28,7 @@ We want to support nested config maps. Let's look at example env variables with 
  
     OOPS/COMPILER/MAX_ITERATIONS=10
     OOPS/RUNTIME/DEBUG=true
-    OOPS/RUNTIME/WELCOME-MESSAGE="hello"
+    OOPS/RUNTIME/WELCOME-MESSAGE=hello
     OOPS/RUNTIME/DATA=~{:some (str "data" " via" " read-string")}
     OOPS/RUNTIME/KEY=:some-keyword
     OOPS/RUNTIME=something   <= this will cause a naming conflic warning
@@ -51,6 +51,8 @@ You can observe several properties:
 
 Also please note that existence of a variable name which is a prefix of another variable name will cause
 naming conflict warning and will be ignored (`OOPS/RUNTIME` is prefix of `OOPS/RUNTIME/DEBUG` in our example above).
+
+Some shells [like Bash](http://stackoverflow.com/a/2821183/84283) do not allow slashes in variable names, you can use two underscores instead of a slash.
 
 ### Integration
 
@@ -117,3 +119,16 @@ Look at the example of the most complex standard coercer:
 
 Please note that the `path` vector has attached some metadata with original raw values which may be handy when 
 reporting warnings/errors. You should use `env-config.impl.report` functionality to report errors in a standard way.
+
+### FAQ
+
+> My shell does not support variable names with slashes. What now?
+
+You can use two underscores instead of a slash. Or alternatively you might want to use `env` command to launch your command with
+defined variables without shell naming restrictions. See [this stack overflow answer](http://unix.stackexchange.com/a/93533/188074).
+ 
+For example:
+ 
+    env OOPS/COMPILER/MAX_ITERATIONS=10 OOPS/RUNTIME/DEBUG=true command
+ 
+I personally use [fish shell](https://fishshell.com) and prefer slashes to visually communicate the nested config structure.
