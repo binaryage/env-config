@@ -6,20 +6,24 @@
 
 (deftest test-reading
   (testing "basic configs"
-    (let [vars {"MY-PROJECT/A"     "s"
-                "MY_PROJECT/B"     42
-                "MY_PROJECT/C_Cx"  "normalize key"
-                "MY_PROJECT/D"     :keyword-val
-                "MY_PROJECT/A1/B1" :nested-key
-                "my_project/A1/B2" "someval"
-                "My_Project/A1/B2" "overwrite"
-                "My_project/A1"    "should-not-destroy-subkeys"}
+    (let [vars {"MY-PROJECT/A"       "s"
+                "MY_PROJECT/B"       42
+                "MY_PROJECT/C_Cx"    "normalize key"
+                "MY_PROJECT/D"       :keyword-val
+                "MY_PROJECT/A1/B1"   :nested-key
+                "my_project/A1/B2"   "someval"
+                "My_Project/A1/B2"   "overwrite"
+                "My_project/A1"      "should-not-destroy-subkeys"
+                "MY_PROJECT__A1__B3" "double-underscore"
+                "MY_PROJECT__A1__B4" "double-dash"}
           expected-config {:a    "s"
                            :b    "42"
                            :c-cx "normalize key"
                            :d    ":keyword-val"
                            :a1   {:b1 ":nested-key"
-                                  :b2 "overwrite"}}]
+                                  :b2 "overwrite"
+                                  :b3 "double-underscore"
+                                  :b4 "double-dash"}}]
       (is (= expected-config (read-config "my-project" vars)))))
   (testing "nested prefix"
     (is (= {:v "1"} (read-config "project/sub-project/x/y" {"project/sub-project/x/y/v" "1"

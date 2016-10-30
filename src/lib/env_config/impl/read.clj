@@ -8,7 +8,8 @@
 (defn canonical-name [name]
   (-> name
       (string/lower-case)
-      (string/replace "_" "-")))
+      (string/replace "_" "-")
+      (string/replace "--" "/")))                                                                                             ; some shells do not support "/", double underscore or dash can be used instead
 
 (defn name-to-keyword [name]
   (-> name
