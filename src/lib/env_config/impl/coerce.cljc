@@ -26,7 +26,8 @@
   (if-let [result (some (partial coerce path val) coercers)]
     (if (= :omit result)
       ::omit
-      (.val result))
+      #?(:clj (.val result)
+         :cljs (.-val result)))
     val))                                                                                                                     ; when no coercer applies, we return it as a string value
 
 (defn push-key [state key]

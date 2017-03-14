@@ -87,7 +87,8 @@
   (testing "make-config-with-logging"
     (let [reports-atom (atom [])]
       (make-config-with-logging "p" {"p/c" "~#!@#xxx"} default-coercers (fn [reports] (reset! reports-atom reports)))
-      (is (= [[:warn "env-config: unable to read-string from variable 'p/c' with value \"~#!@#xxx\", attempted to eval code: '#!@#xxx', got problem: EOF while reading."]] @reports-atom)))))
+      (is (= :warn (-> @reports-atom ffirst)))
+      (is (re-find #"unable to read-string from variable 'p/c' with value \"~#!@#xxx\"" (-> @reports-atom first second))))))
 
 (deftest test-problems
   (testing "invalid code"

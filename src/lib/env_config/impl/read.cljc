@@ -80,5 +80,5 @@
 (defn read-config [prefix vars]
   (try
     (naked-read-config prefix vars)
-    (catch Throwable e
-      (report/report-error! (str "internal error in read-config: " (.getMessage e))))))
+    (catch #?(:clj Throwable :cljs js/Error) e
+        (report/report-error! (str "internal error in read-config: " #?(:clj (.getMessage e) :cljs (.-message e)))))))
