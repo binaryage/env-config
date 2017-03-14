@@ -1,5 +1,6 @@
 (ns env-config.impl.coercers
   (:require [clojure.string :as string]
+            [clojure.edn :as edn]
             [env-config.impl.coerce :refer [->Coerced]]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [make-var-description string-starts-with?]]))
@@ -17,32 +18,36 @@
     nil))
 
 (defn integer-coercer [_path val]
-  (try
-    (->Coerced (Integer/parseInt val))
-    (catch NumberFormatException e)))
+  #?(:clj (try
+            (->Coerced (Integer/parseInt val))
+            (catch NumberFormatException e))
+     :cljs (let [v (js/parseInt val)]
+             (when (number? v) v))))
 
 (defn double-coercer [_path val]
-  (try
-    (->Coerced (Double/parseDouble val))
-    (catch NumberFormatException e)))
+  #?(:clj (try
+            (->Coerced (Double/parseDouble val))
+            (catch NumberFormatException e))
+     :cljs (let [v (js/parseFloat val)]                                                                                       ; For more precision in JS use bignumber.js
+             (when (number? v) v))))
 
 (defn keyword-coercer [_path val]
   (if (string-starts-with? val ":")
-    (->Coerced (keyword (.substring val 1)))))
+    (->Coerced (keyword (subs val 1)))))
 
 (defn symbol-coercer [_path val]
   (if (string-starts-with? val "'")
-    (->Coerced (symbol (.substring val 1)))))
+    (->Coerced (symbol (subs val 1)))))
 
 (defn code-coercer [path val]
   (if (string-starts-with? val "~")
-    (let [code (.substring val 1)]
+    (let [code (subs val 1)]
       (try
-        (->Coerced (read-string code))                                                                                        ; TODO: should we rather use edn/read-string here?
-        (catch Throwable e
-          (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
-                                       "attempted to eval code: '" code "', "
-                                       "got problem: " (.getMessage e) "."))
+        (->Coerced (edn/read-string code))
+        (catch #?(:clj Throwable :cljs js/Error) e
+            (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
+                                         "attempted to eval code: '" code "', "
+                                         "got problem: " #?(:clj (.getMessage e) :cljs (.-message e)) "."))
           :omit)))))
 
 ; -- default coercers -------------------------------------------------------------------------------------------------------

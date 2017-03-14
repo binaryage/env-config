@@ -13,7 +13,7 @@ pushd `dirname "${BASH_SOURCE[0]}"`
 cd ..
 
 ROOT=`pwd`
-PROJECT_VERSION_FILE="src/lib/env_config/version.clj"
+PROJECT_VERSION_FILE="src/lib/env_config/version.cljc"
 PROJECT_FILE="project.clj"
 
 popd

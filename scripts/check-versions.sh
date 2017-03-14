@@ -9,7 +9,7 @@ pushd "$ROOT"
 
 LEIN_VERSION=`cat "$PROJECT_FILE" | grep "defproject" | cut -d' ' -f3 | cut -d\" -f2`
 
-# same version must be in src/version.clj
+# same version must be in src/version.cljc
 
 PROJECT_VERSION=`cat "$PROJECT_VERSION_FILE" | grep "(def current-version" | cut -d" " -f3 | cut -d\" -f2`
 if [ -z "$PROJECT_VERSION" ] ; then
