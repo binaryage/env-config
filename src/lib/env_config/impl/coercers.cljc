@@ -17,7 +17,7 @@
        x)))
 
 (defn nil-coercer [_path val]
-  (if (= (string/lower-case val) "nil")
+  (when (= (string/lower-case val) "nil")
     (->Coerced nil)))
 
 (defn boolean-coercer [_path val]
@@ -41,11 +41,11 @@
              (->Coerced v))))                                                                                                 ; For more precision in JS use bignumber.js
 
 (defn keyword-coercer [_path val]
-  (if (string-starts-with? val ":")
+  (when (string-starts-with? val ":")
     (->Coerced (keyword (subs val 1)))))
 
 (defn symbol-coercer [_path val]
-  (if (string-starts-with? val "'")
+  (when (string-starts-with? val "'")
     (->Coerced (symbol (subs val 1)))))
 
 #?(:cljs
@@ -57,7 +57,7 @@
        (edn/read r true nil false))))
 
 (defn code-coercer [path val]
-  (if (string-starts-with? val "~")
+  (when (string-starts-with? val "~")
     (let [code (subs val 1)]
       (try
         (->Coerced #?(:clj (edn/read-string code)
