@@ -13,6 +13,8 @@ before_script:
   - sudo add-apt-repository -y ppa:mfikes/planck
   - sudo apt-get -qq update
   - sudo apt-get install -y libstdc++6-4.7-dev planck
-  - sudo npm install -g lumo-cljs
+  - nvm install node
+  - nvm use node
+  - npm install -g lumo-cljs
 
 script: lein test-all
