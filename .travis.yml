@@ -8,5 +8,8 @@ before_script:
   # update lein to latest, https://github.com/technomancy/leiningen/issues/2014#issuecomment-153829977
   - yes y | sudo lein upgrade
   - npm install -g lumo-cljs
+  - add-apt-repository ppa:ubuntu-toolchain-r/test
+  - apt-get update
+  - apt-get install -y libstdc++6-4.7-dev
 
 script: lein test-all
