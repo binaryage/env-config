@@ -20,12 +20,12 @@
   :test-paths ["test/src/tests"]
   :resource-paths ^:replace ["scripts"]
 
-  :cljsbuild {:builds [{:id "test-build"
+  :cljsbuild {:builds [{:id           "test-build"
                         :source-paths ["src/lib" "test/src/tests"]
-                        :compiler {:output-to "test/resources/.compiled/tests.js"
-                                   :main 'env-config.tests.runner
-                                   :target :nodejs
-                                   :optimizations :none}}]} ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
+                        :compiler     {:output-to     "test/resources/.compiled/tests.js"
+                                       :main          'env-config.tests.runner
+                                       :target        :nodejs
+                                       :optimizations :none}}]}
 
 
   :profiles {:nuke-aliases
