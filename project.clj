@@ -7,7 +7,7 @@
   :scm {:name "git"
         :url  "https://github.com/binaryage/env-config"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha14" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha15" :scope "provided"]
                  [org.clojure/tools.logging "0.3.1" :scope "test"]]
 
   :clean-targets ^{:protect false} ["target"
