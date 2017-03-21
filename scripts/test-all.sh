@@ -23,9 +23,14 @@ echo "--------------------------------------------------------------------------
 lein with-profile +clojure17 test
 
 echo ""
-echo "Running self-host tests"
+echo "Running self-host tests against lumo"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 lein tach lumo
+
+echo ""
+echo "Running self-host tests against planck"
+echo "-----------------------------------------------------------------------------------------------------------------------"
+lein tach planck
 
 popd
 
