@@ -23,6 +23,6 @@
 ; -- standard logging -------------------------------------------------------------------------------------------------------
 
 (defn log-reports-if-needed! [reports & [reporter]]
-  (if (and (or (nil? reporter) (fn? reporter)) (not (empty? reports)))
+  (when (and (or (nil? reporter) (fn? reporter)) (not (empty? reports)))
     (let [effective-reporter (or reporter logging/reporter)]
       (effective-reporter reports))))

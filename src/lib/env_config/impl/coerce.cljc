@@ -19,14 +19,15 @@
         result
         (throw (ex-info (str "coercer returned an unexpected result: " result " (" (type result) "), "
                              "allowed are nil, :omit and Coerced instances") {}))))
-    (catch Throwable e
-      (report/report-error! (str "problem with coercer " coercer ": " (.getMessage e) ".")))))
+    (catch #?(:clj Throwable :cljs js/Error) e
+      (report/report-error! (str "problem with coercer " coercer ": " #?(:clj (.getMessage e) :cljs (.-message e)) ".")))))
 
 (defn apply-coercers [coercers path val]
   (if-let [result (some (partial coerce path val) coercers)]
     (if (= :omit result)
       ::omit
-      (.val result))
+      #?(:clj (.val result)
+         :cljs (.-val result)))
     val))                                                                                                                     ; when no coercer applies, we return it as a string value
 
 (defn push-key [state key]
@@ -63,5 +64,5 @@
 (defn coerce-config [config coercers]
   (try
     (naked-coerce-config config coercers)
-    (catch Throwable e
-      (report/report-error! (str "internal error in coerce-config: " (.getMessage e))))))
+    (catch #?(:clj Throwable :cljs js/Error) e
+      (report/report-error! (str "internal error in coerce-config: " #?(:clj (.getMessage e) :cljs (.-message e)))))))

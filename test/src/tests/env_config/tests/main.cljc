@@ -1,7 +1,9 @@
 (ns env-config.tests.main
-  (:require [clojure.test :refer :all]
+  (:require #?(:clj [clojure.test :refer [deftest testing is are]]
+               :cljs [cljs.test :refer-macros [deftest testing is are]])
             [clojure.string :as string]
-            [env-config.core :refer :all]
+            [env-config.core :refer [read-config coerce-config make-config
+                                     make-config-with-logging default-coercers]]
             [env-config.impl.coerce :refer [->Coerced]]))
 
 (deftest test-reading
@@ -87,7 +89,8 @@
   (testing "make-config-with-logging"
     (let [reports-atom (atom [])]
       (make-config-with-logging "p" {"p/c" "~#!@#xxx"} default-coercers (fn [reports] (reset! reports-atom reports)))
-      (is (= [[:warn "env-config: unable to read-string from variable 'p/c' with value \"~#!@#xxx\", attempted to eval code: '#!@#xxx', got problem: EOF while reading."]] @reports-atom)))))
+      (is (= :warn (-> @reports-atom ffirst)))
+      (is (re-find #"unable to read-string from variable 'p/c' with value \"~#!@#xxx\"" (-> @reports-atom first second))))))
 
 (deftest test-problems
   (testing "invalid code"

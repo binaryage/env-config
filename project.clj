@@ -20,13 +20,20 @@
   :test-paths ["test/src/tests"]
   :resource-paths ^:replace ["scripts"]
 
-  :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
+  :cljsbuild {:builds [{:id "test-build"
+                        :source-paths ["src/lib" "test/src/tests"]
+                        :compiler {:output-to "test/resources/.compiled/tests.js"
+                                   :main 'env-config.tests.runner
+                                   :target :nodejs
+                                   :optimizations :none}}]} ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
+
 
   :profiles {:nuke-aliases
              {:aliases ^:replace {}}
 
              :dev
-             {:plugins [[com.jakemccrary/lein-test-refresh "0.17.0"]]}
+             {:plugins [[com.jakemccrary/lein-test-refresh "0.17.0"]
+                        [lein-tach "0.2.0"]]}
 
              :lib
              ^{:pom-scope :provided}                                                                                          ; ! to overcome default jar/pom behaviour, our :dependencies replacement would be ignored for some reason
@@ -59,4 +66,6 @@
                         ["shell" "scripts/check-versions.sh"]
                         ["shell" "scripts/prepare-jar.sh"]
                         ["shell" "scripts/check-release.sh"]
-                        ["shell" "scripts/deploy-clojars.sh"]]})
+                        ["shell" "scripts/deploy-clojars.sh"]]}
+
+  :tach {:debug? true})
