@@ -27,7 +27,6 @@
                                        :target        :nodejs
                                        :optimizations :none}}]}
 
-
   :profiles {:nuke-aliases
              {:aliases ^:replace {}}
 
@@ -68,4 +67,5 @@
                         ["shell" "scripts/check-release.sh"]
                         ["shell" "scripts/deploy-clojars.sh"]]}
 
-  :tach {:debug? true})
+  :tach {:debug? false
+         :force-non-zero-exit-on-test-failure? true})
