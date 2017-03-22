@@ -17,7 +17,8 @@
                 "My_project/A1"      "should-not-destroy-subkeys"
                 "MY_PROJECT__A1__B3" "double-underscore"
                 "MY_PROJECT--A1-_B4" "double-dash/mixed-dash-underscore"
-                "NOT-MY-PROJECT/X"   "should not see this one"}
+                "NOT-MY-PROJECT/X"   "should not see this one"
+                "MY-PROJECT-NOT/Y"   "should not see this one"}
           expected-config {:a    "s"
                            :b    "42"
                            :c-cx "normalize key"
