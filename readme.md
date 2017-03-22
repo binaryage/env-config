@@ -109,7 +109,7 @@ Look at the example of the most complex standard coercer:
   (if (string-starts-with? val "~")
     (let [code (.substring val 1)]
       (try
-        (->Coerced (read-string code))                                                                                        ; TODO: should we rather use edn/read-string here?
+        (->Coerced (read-string code))
         (catch Throwable e
           (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
                                        "attempted to eval code: '" code "', "
