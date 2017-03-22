@@ -6,7 +6,7 @@
 
 This is a Clojure(Script) library for enabling easy and consistent config map overrides via environment variables.
 
-This is useful for library authors who want to add some flexibility how they libraries can be configured.
+This is useful for library authors who want to add some flexibility how their libraries can be configured.
 
 ## Intro
 
@@ -132,3 +132,8 @@ For example:
     env OOPS/COMPILER/MAX_ITERATIONS=10 OOPS/RUNTIME/DEBUG=true command
  
 I personally use [fish shell](https://fishshell.com) and prefer slashes to visually communicate the nested config structure.
+
+> Can this be used in self-hosted mode?
+
+Yes, thanks to [arichiardi](https://github.com/arichiardi). Since v0.2.0 you can use this library to configure scripts running
+ under [Planck](https://github.com/mfikes/planck) or [Lumo](https://github.com/anmonteiro/lumo).
