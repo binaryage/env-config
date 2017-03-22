@@ -1,5 +1,6 @@
 (ns env-config.impl.read
   (:require [clojure.string :as string]
+            [env-config.impl.macros :refer [try* catch-all]]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [make-var-description]]
             [env-config.impl.platform :refer [string-starts-with? get-ex-message]]))
@@ -79,7 +80,7 @@
          (reduce config-builder {}))))
 
 (defn read-config [prefix vars]
-  (try
+  (try*
     (naked-read-config prefix vars)
-    (catch #?(:clj Throwable :cljs js/Error) e
+    (catch-all e
       (report/report-error! (str "internal error in read-config: " (get-ex-message e))))))

@@ -1,5 +1,6 @@
 (ns env-config.impl.coerce
   (:require [clojure.string :as string]
+            [env-config.impl.macros :refer [try* catch-all]]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [dissoc-in]]
             [env-config.impl.platform :refer [get-ex-message]]))
@@ -19,13 +20,13 @@
       (instance? Coerced result)))                                                                                            ; this wraps coercion result
 
 (defn coerce [path val coercer]
-  (try
+  (try*
     (let [result (coercer path val)]
       (if (valid-coercion-result? result)
         result
         (throw (ex-info (str "coercer returned an unexpected result: " result " (" (type result) "), "
                              "allowed are nil, :omit and Coerced instances") {}))))
-    (catch #?(:clj Throwable :cljs js/Error) e
+    (catch-all e
       (report/report-error! (str "problem with coercer " coercer ": " (get-ex-message e) ".")))))
 
 (defn apply-coercers [coercers path val]
@@ -67,7 +68,7 @@
     (:config (reduce-kv reducer init config))))
 
 (defn coerce-config [config coercers]
-  (try
+  (try*
     (naked-coerce-config config coercers)
-    (catch #?(:clj Throwable :cljs js/Error) e
+    (catch-all e
       (report/report-error! (str "internal error in coerce-config: " (get-ex-message e))))))

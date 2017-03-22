@@ -2,6 +2,7 @@
   (:require [clojure.string :as string]
             #?(:clj [clojure.edn :as edn]
                :cljs [cljs.reader :as edn])
+            [env-config.impl.macros :refer [try* catch-all]]
             [env-config.impl.coerce :refer [->Coerced]]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [make-var-description ]]
@@ -60,13 +61,13 @@
 (defn code-coercer [path val]
   (when (string-starts-with? val "~")
     (let [code (subs val 1)]
-      (try
-        (->Coerced #?(:clj (edn/read-string code)
+      (try*
+        (->Coerced #?(:clj  (edn/read-string code)
                       :cljs (custom-read-string code)))
-        (catch #?(:clj Throwable :cljs js/Error) e
-            (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
-                                         "attempted to eval code: '" code "', "
-                                         "got problem: " (get-ex-message e) "."))
+        (catch-all e
+          (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
+                                       "attempted to eval code: '" code "', "
+                                       "got problem: " (get-ex-message e) "."))
           :omit)))))
 
 ; -- default coercers -------------------------------------------------------------------------------------------------------
