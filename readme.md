@@ -1,6 +1,6 @@
 # env-config
 
-[![GitHub license](https://img.shields.io/github/license/binaryage/env-config.svg)](LICENSE.txt) 
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](license.txt) 
 [![Clojars Project](https://img.shields.io/clojars/v/binaryage/env-config.svg)](https://clojars.org/binaryage/env-config) 
 [![Travis](https://img.shields.io/travis/binaryage/env-config.svg)](https://travis-ci.org/binaryage/env-config) 
 
