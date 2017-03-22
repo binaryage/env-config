@@ -1,7 +1,7 @@
 (ns env-config.impl.coerce
   (:require [clojure.string :as string]
             [env-config.impl.report :as report]
-            [env-config.impl.helpers :refer [dissoc-in make-var-description string-starts-with?]]))
+            [env-config.impl.helpers :refer [dissoc-in]]))
 
 (deftype Coerced [val])
 

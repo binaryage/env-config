@@ -4,7 +4,8 @@
                :cljs [cljs.reader :as edn])
             [env-config.impl.coerce :refer [->Coerced]]
             [env-config.impl.report :as report]
-            [env-config.impl.helpers :refer [make-var-description string-starts-with?]]))
+            [env-config.impl.helpers :refer [make-var-description ]]
+            [env-config.impl.platform :refer [string-starts-with?]]))
 
 ; -- standard coercers ------------------------------------------------------------------------------------------------------
 

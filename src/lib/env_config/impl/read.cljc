@@ -1,7 +1,8 @@
 (ns env-config.impl.read
   (:require [clojure.string :as string]
             [env-config.impl.report :as report]
-            [env-config.impl.helpers :refer [make-var-description string-starts-with?]]))
+            [env-config.impl.helpers :refer [make-var-description]]
+            [env-config.impl.platform :refer [string-starts-with?]]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
