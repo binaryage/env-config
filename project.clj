@@ -8,6 +8,7 @@
         :url  "https://github.com/binaryage/env-config"}
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha15" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.473" :scope "test"]
                  [org.clojure/tools.logging "0.3.1" :scope "test"]]
 
   :clean-targets ^{:protect false} ["target"
@@ -50,20 +51,16 @@
              :clojure17
              {:dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]]}
 
-             :cljs
-             {:dependencies [[org.clojure/clojurescript "1.9.473" :scope "provided"]]}
-
              :self-host
-             [:cljs
-              {:cljsbuild {:builds [{:id           "self-host-test-build"
-                                     :source-paths ["src/lib"
-                                                    "test/src/tests"]
-                                     :compiler     {:output-to     "test/resources/.compiled/tests.js"
-                                                    :main          'env-config.tests.runner
-                                                    :target        :nodejs
-                                                    :optimizations :none}}]}
-               :tach      {:debug?                               false
-                           :force-non-zero-exit-on-test-failure? true}}]}
+             {:cljsbuild {:builds [{:id           "self-host-test-build"
+                                    :source-paths ["src/lib"
+                                                   "test/src/tests"]
+                                    :compiler     {:output-to     "test/resources/.compiled/tests.js"
+                                                   :main          'env-config.tests.runner
+                                                   :target        :nodejs
+                                                   :optimizations :none}}]}
+              :tach      {:debug?                               false
+                          :force-non-zero-exit-on-test-failure? true}}}
 
   :aliases {"install"        ["do"
                               ["shell" "scripts/prepare-jar.sh"]
