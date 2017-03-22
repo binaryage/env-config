@@ -1,4 +1,4 @@
-Copyright (c) BinaryAge Limited and contributors:
+Copyright (c) BinaryAge Limited and contributors
 https://github.com/binaryage/env-config/graphs/contributors
 
 MIT License
