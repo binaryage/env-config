@@ -1,12 +1,10 @@
 (ns env-config.impl.coercers
   (:require [clojure.string :as string]
-            #?(:clj [clojure.edn :as edn]
-               :cljs [cljs.reader :as edn])
             [env-config.impl.macros :refer [try* catch-all]]
             [env-config.impl.coerce :refer [->Coerced]]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [make-var-description ]]
-            [env-config.impl.platform :refer [string-starts-with? get-ex-message]]))
+            [env-config.impl.platform :refer [string-starts-with? get-ex-message read-code-string]]))
 
 ; -- standard coercers ------------------------------------------------------------------------------------------------------
 
@@ -50,20 +48,11 @@
   (when (string-starts-with? val "'")
     (->Coerced (symbol (subs val 1)))))
 
-#?(:cljs
-   (defn custom-read-string
-     "Necessary in order to be sure that cljs.reader/read-string either
-  throws or returns :omit in case of error."
-     [s]
-     (let [r (edn/push-back-reader s)]
-       (edn/read r true nil false))))
-
 (defn code-coercer [path val]
   (when (string-starts-with? val "~")
     (let [code (subs val 1)]
       (try*
-        (->Coerced #?(:clj  (edn/read-string code)
-                      :cljs (custom-read-string code)))
+        (->Coerced (read-code-string code))
         (catch-all e
           (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
                                        "attempted to eval code: '" code "', "
