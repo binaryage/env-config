@@ -1,6 +1,5 @@
 (ns env-config.tests.main
-  (:require #?(:clj [clojure.test :refer [deftest testing is are]]
-               :cljs [cljs.test :refer-macros [deftest testing is are]])
+  (:require [clojure.test :refer [deftest testing is are]]
             [clojure.string :as string]
             [env-config.core :refer [read-config coerce-config make-config
                                      make-config-with-logging default-coercers]]
