@@ -49,8 +49,8 @@
 (def default-coercers
   [nil-coercer
    boolean-coercer
-   #?@(:clj  [integer-coercer double-coercer]                                                                                 ; order counts
-       :cljs [double-coercer integer-coercer])
+   integer-coercer
+   double-coercer                                                                                                             ; order counts
    keyword-coercer
    symbol-coercer
    code-coercer])

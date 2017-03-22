@@ -1,5 +1,5 @@
 (ns env-config.impl.platform
-  "Platform dependent code: self-host implementation."
+  "Platform dependent code: ClojureScript implementation."
   (:require [clojure.string :as string]
             [cljs.reader :as edn]
             [env-config.impl.types :refer [->Coerced]]))
@@ -13,17 +13,14 @@
   (let [r (edn/push-back-reader code)]
     (edn/read r true nil false)))                                                                                             ; throws in case of errors
 
-(defn number-or-nil
-  "Return x or nil if it is not a number.
-We need this in JS land because (number? NaN) => true (!!)."
-  [x]
-  (when (and (not (js/isNaN x)) (number? x))
-    x))
-
 (defn coerce-integer [val]
-  (when-let [v (number-or-nil (js/parseInt val))]
-    (->Coerced v)))
+  (if (re-matches #"(\+|\-)?([0-9]+|Infinity)" val)                                                                           ; see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+    (let [parsed-int (js/parseInt val 10)]
+      (if-not (js/isNaN parsed-int)
+        (->Coerced parsed-int)))))
 
 (defn coerce-double [val]
-  (when-let [v (number-or-nil (js/parseFloat val))]
-    (->Coerced v)))
+  (if (re-matches #"(\+|\-)?([0-9]+(\.[0-9]+)?|Infinity)" val)                                                                ; see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/parseFloat
+    (let [parsed-float (js/parseFloat val)]
+      (if-not (js/isNaN parsed-float)
+        (->Coerced parsed-float)))))
