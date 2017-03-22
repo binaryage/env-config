@@ -1,20 +1,13 @@
 (ns env-config.impl.coercers
   (:require [clojure.string :as string]
+            [env-config.impl.types :refer [->Coerced]]
             [env-config.impl.macros :refer [try* catch-all]]
-            [env-config.impl.coerce :refer [->Coerced]]
             [env-config.impl.report :as report]
-            [env-config.impl.helpers :refer [make-var-description ]]
-            [env-config.impl.platform :refer [string-starts-with? get-ex-message read-code-string]]))
+            [env-config.impl.helpers :refer [make-var-description]]
+            [env-config.impl.platform :refer [string-starts-with? get-ex-message read-code-string
+                                              coerce-integer coerce-double]]))
 
 ; -- standard coercers ------------------------------------------------------------------------------------------------------
-
-#?(:cljs
-   (defn number-or-nil
-     "Return x or nil if it is not a number.
-  We need this in JS land because (number? NaN) => true (!!)."
-     [x]
-     (when (and (not (js/isNaN x)) (number? x))
-       x)))
 
 (defn nil-coercer [_path val]
   (when (= (string/lower-case val) "nil")
@@ -27,18 +20,10 @@
     nil))
 
 (defn integer-coercer [_path val]
-  #?(:clj (try
-            (->Coerced (Integer/parseInt val))
-            (catch NumberFormatException e))
-     :cljs (when-let [v (number-or-nil (js/parseInt val))]
-             (->Coerced v))))
+  (coerce-integer val))
 
 (defn double-coercer [_path val]
-  #?(:clj (try
-            (->Coerced (Double/parseDouble val))
-            (catch NumberFormatException e))
-     :cljs (when-let [v (number-or-nil (js/parseFloat val))]
-             (->Coerced v))))                                                                                                 ; For more precision in JS use bignumber.js
+  (coerce-double val))
 
 (defn keyword-coercer [_path val]
   (when (string-starts-with? val ":")
@@ -64,7 +49,7 @@
 (def default-coercers
   [nil-coercer
    boolean-coercer
-   #?@(:clj [integer-coercer double-coercer]                                                                                  ; order counts
+   #?@(:clj  [integer-coercer double-coercer]                                                                                 ; order counts
        :cljs [double-coercer integer-coercer])
    keyword-coercer
    symbol-coercer

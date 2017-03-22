@@ -3,7 +3,7 @@
             [clojure.string :as string]
             [env-config.core :refer [read-config coerce-config make-config
                                      make-config-with-logging default-coercers]]
-            [env-config.impl.coerce :refer [->Coerced]]))
+            [env-config.impl.types :refer [->Coerced]]))
 
 (deftest test-reading
   (testing "basic configs"

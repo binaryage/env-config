@@ -1,23 +1,17 @@
 (ns env-config.impl.coerce
   (:require [clojure.string :as string]
+            [env-config.impl.types :as t :refer [coerced? get-value]]
             [env-config.impl.macros :refer [try* catch-all]]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [dissoc-in]]
             [env-config.impl.platform :refer [get-ex-message]]))
-
-(defprotocol IValueWrapper
-  (get-value [this]))
-
-(deftype Coerced [val]
-  IValueWrapper
-  (get-value [this] val))
 
 ; -- coercion machinery -----------------------------------------------------------------------------------------------------
 
 (defn valid-coercion-result? [result]
   (or (nil? result)                                                                                                           ; this means "not interested"
       (= :omit result)                                                                                                        ; this means "ignore value because of an error"
-      (instance? Coerced result)))                                                                                            ; this wraps coercion result
+      (coerced? result)))                                                                                                     ; this wraps coercion result
 
 (defn coerce [path val coercer]
   (try*
