@@ -3,3 +3,6 @@
   (:require [clojure.string :as string]))
 
 (def string-starts-with? string/starts-with?)
+
+(defn get-ex-message [e]
+  (or (.-message e) "?"))

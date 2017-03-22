@@ -6,3 +6,6 @@
   "True if s starts with substr."
   [^CharSequence s ^String substr]
   (.startsWith (.toString s) substr))
+
+(defn get-ex-message [e]
+  (.getMessage e))

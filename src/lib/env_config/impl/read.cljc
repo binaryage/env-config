@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [make-var-description]]
-            [env-config.impl.platform :refer [string-starts-with?]]))
+            [env-config.impl.platform :refer [string-starts-with? get-ex-message]]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
@@ -82,4 +82,4 @@
   (try
     (naked-read-config prefix vars)
     (catch #?(:clj Throwable :cljs js/Error) e
-        (report/report-error! (str "internal error in read-config: " #?(:clj (.getMessage e) :cljs (.-message e)))))))
+      (report/report-error! (str "internal error in read-config: " (get-ex-message e))))))

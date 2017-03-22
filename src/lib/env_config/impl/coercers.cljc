@@ -5,7 +5,7 @@
             [env-config.impl.coerce :refer [->Coerced]]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [make-var-description ]]
-            [env-config.impl.platform :refer [string-starts-with?]]))
+            [env-config.impl.platform :refer [string-starts-with? get-ex-message]]))
 
 ; -- standard coercers ------------------------------------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@
         (catch #?(:clj Throwable :cljs js/Error) e
             (report/report-warning! (str "unable to read-string from " (make-var-description (meta path)) ", "
                                          "attempted to eval code: '" code "', "
-                                         "got problem: " #?(:clj (.getMessage e) :cljs (.-message e)) "."))
+                                         "got problem: " (get-ex-message e) "."))
           :omit)))))
 
 ; -- default coercers -------------------------------------------------------------------------------------------------------
