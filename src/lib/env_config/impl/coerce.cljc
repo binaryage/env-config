@@ -4,7 +4,12 @@
             [env-config.impl.helpers :refer [dissoc-in]]
             [env-config.impl.platform :refer [get-ex-message]]))
 
-(deftype Coerced [val])
+(defprotocol IValueWrapper
+  (get-value [this]))
+
+(deftype Coerced [val]
+  IValueWrapper
+  (get-value [this] val))
 
 ; -- coercion machinery -----------------------------------------------------------------------------------------------------
 
@@ -27,8 +32,7 @@
   (if-let [result (some (partial coerce path val) coercers)]
     (if (= :omit result)
       ::omit
-      #?(:clj (.val result)
-         :cljs (.-val result)))
+      (get-value result))
     val))                                                                                                                     ; when no coercer applies, we return it as a string value
 
 (defn push-key [state key]
