@@ -23,13 +23,13 @@
 
   :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
 
-  :profiles {:nuke-aliases
-             {:aliases ^:replace {}}
-
-             :dev
+  :profiles {:dev
              {:plugins [[com.jakemccrary/lein-test-refresh "0.17.0"]
                         [lein-tach "0.2.0"]
                         [lein-cljsbuild "1.1.5"]]}
+
+             :nuke-aliases
+             {:aliases ^:replace {}}
 
              :lib
              ^{:pom-scope :provided}                                                                                          ; ! to overcome default jar/pom behaviour, our :dependencies replacement would be ignored for some reason
