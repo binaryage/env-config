@@ -1,4 +1,5 @@
-(ns env-config.impl.helpers)
+(ns env-config.impl.helpers
+  (:require [clojure.string :as string]))
 
 ; don't want to bring full medley dependency
 ; https://github.com/weavejester/medley/blob/d8be5e2c45c61f4846953a5187e623e0ebe800f0/src/medley/core.cljc#L11
@@ -22,7 +23,11 @@
     (str "variable '" orig-name "' with value " (pr-str orig-value))))
 
 ; for Clojure 1.7
-(defn string-starts-with?
+#?(:clj
+   (defn string-starts-with?
   "True if s starts with substr."
   [^CharSequence s ^String substr]
-  (.startsWith (.toString s) substr))
+  (.startsWith (.toString s) substr)))
+
+#?(:cljs
+   (def string-starts-with? string/starts-with?))
