@@ -44,10 +44,10 @@
                :test-paths     ^:replace []}]
 
              :clojure18
-             {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]]}
+             {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided" :upgrade false]]}
 
              :clojure17
-             {:dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]]}
+             {:dependencies [[org.clojure/clojure "1.7.0" :scope "provided" :upgrade false]]}
 
              :self-host
              {:cljsbuild {:builds [{:id           "self-host-test-build"
