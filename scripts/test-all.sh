@@ -5,7 +5,7 @@ set -e
 pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
 source "./config.sh"
 
-pushd "$ROOT"
+cd "$ROOT"
 
 echo ""
 echo "Running tests against Clojure 1.9"
@@ -23,15 +23,12 @@ echo "--------------------------------------------------------------------------
 lein with-profile +clojure17 test
 
 echo ""
-echo "Running self-host tests against $(lumo --help | head -n 1 | xargs echo -n)"
-echo "-----------------------------------------------------------------------------------------------------------------------"
-lein with-profile +self-host tach lumo self-host-test-build
-
-echo ""
 echo "Running self-host tests against $(planck --help | head -n 1 | xargs echo -n)"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 lein with-profile +self-host tach planck self-host-test-build
 
-popd
+echo "Running self-host tests against $(lumo --help | head -n 1 | xargs echo -n)"
+echo "-----------------------------------------------------------------------------------------------------------------------"
+lein with-profile +self-host tach lumo self-host-test-build
 
 popd
