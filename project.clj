@@ -8,7 +8,7 @@
         :url  "https://github.com/binaryage/env-config"}
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha15" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.518" :scope "test"]
+                 [org.clojure/clojurescript "1.9.521" :scope "test"]
                  [org.clojure/tools.logging "0.3.1" :scope "test"]]
 
   :clean-targets ^{:protect false} ["target"
