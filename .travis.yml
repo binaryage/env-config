@@ -15,9 +15,9 @@ before_script:
   - sudo apt-get install -y planck
   - nvm install node
   - nvm use node
-  #- npm install -g lumo-cljs
-  - mkdir -p lumo && cd lumo && wget -O lumo.zip http://s3.amazonaws.com/lumo-linux/lumo.zip && unzip lumo.zip && cd ..
-  - sudo ln -s `pwd`/lumo/lumo /usr/local/bin/lumo
+  - npm install -g lumo-cljs
+#  - mkdir -p lumo && cd lumo && wget -O lumo.zip http://s3.amazonaws.com/lumo-linux/lumo.zip && unzip lumo.zip && cd ..
+#  - sudo ln -s `pwd`/lumo/lumo /usr/local/bin/lumo
   - git clone -b patched https://github.com/darwin/tach.git
   - cd tach && lein install && cd ..  # patch tach for now
 
