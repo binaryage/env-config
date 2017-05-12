@@ -1,20 +1,22 @@
+sudo: true
 dist: trusty
-sudo: required
 language: clojure
-
-cache:
-  directories:
-    - $HOME/.m2
-
+notifications:
+  email:
+  - antonin@hildebrand.cz
+  hipchat:
+    rooms:
+      secure: e62F22RwYJVT7BSUdWFSchRdekiTEGX8I56c2wKKY+PoTq1PNs+ZBIJMIseF2+H4VjmRZ7AtTh3KWk2dNOmZZQb5UNRdzLEpFUELOghcjGVCXbeEqa+aJJ+OzrFoHepKSoy2PdFsWH3kiqf3juSyPNGPU++Is5iPhsGefkeovAQ46V44ALqvoGZ9QnPQOgVkiCuI8yLroCCg2w1442d8BuHAs5sIF1aKdyGdMSRgLEEJ3rYci39qRtFNEJiTyzq9KgHIdSKYWOWU8gbLVLbOMUl75HIMZtkQIsyUM4WgaxUqvU5Jz/2uRX8b9rYmIvWuAUW4NQfvJ8YnIuLTjl4oA1vsKLiXjbw4sZGe8r5T+Rbdg+9tVpJBDZjKA0SHhcKzwFca8Oq7Wnli8c4AkqzLWaEZa99/B9/FLEnoqmFJ6XaEIi83CPMYTJkJ9XIOwETPj8KVS2C8pExYm5Fy1lr9s75CicMVGYmztUzr9iAdbGJRyc/UOFrfHZ3PyjH9QM9YcmKbdqwqj83tICSmxjUdvm/Xfe/aU4zxNx6SXE089xpEzYdwPKUPJRqEYfMMhwA+Pec4HgIkplLxfGOdDbG5rE4Oz7x6Fns3ffvK3Kv+zCTp9wAEREdo+hu8M+oelipLPj1V5AVvG/JFIctdxxGawIK1fTeUDDoCdaJUjjl9Vlk=
+    template:
+    - '<a href="%{build_url}">%{repository}#%{build_number}</a>: %{message} (<a href="%{compare_url}">changes</a>)'
+    format: html
 before_script:
-  # update lein to latest, https://github.com/technomancy/leiningen/issues/2014#issuecomment-153829977
-  - yes y | sudo lein upgrade
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo add-apt-repository -y ppa:mfikes/planck
-  - sudo apt-get -qq update
-  - sudo apt-get install -y planck
-  - nvm install node
-  - nvm use node
-  - npm install -g lumo-cljs
-
+- yes y | sudo lein upgrade
+- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+- sudo add-apt-repository -y ppa:mfikes/planck
+- sudo apt-get -qq update
+- sudo apt-get install -y planck
+- nvm install node
+- nvm use node
+- npm install -g lumo-cljs
 script: lein test-all
