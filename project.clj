@@ -7,9 +7,9 @@
   :scm {:name "git"
         :url  "https://github.com/binaryage/env-config"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha15" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.521" :scope "test"]
-                 [org.clojure/tools.logging "0.3.1" :scope "test"]]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha17" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.854" :scope "test"]
+                 [org.clojure/tools.logging "0.4.0" :scope "test"]]
 
   :clean-targets ^{:protect false} ["target"
                                     "test/resources/.compiled"]
@@ -24,9 +24,9 @@
   :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
 
   :profiles {:dev
-             {:plugins [[com.jakemccrary/lein-test-refresh "0.19.0"]
+             {:plugins [[com.jakemccrary/lein-test-refresh "0.20.0"]
                         [lein-tach "0.3.0"]
-                        [lein-cljsbuild "1.1.5"]]}
+                        [lein-cljsbuild "1.1.6"]]}
 
              :nuke-aliases
              {:aliases ^:replace {}}
