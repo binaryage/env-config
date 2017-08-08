@@ -7,12 +7,12 @@ source "./config.sh"
 
 pushd "$ROOT"
 
-echo ""
+echo
 echo "Running self-host tests against $(lumo --help | head -n 1 | xargs echo -n)"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 lein with-profile +self-host tach lumo self-host-test-build
 
-echo ""
+echo
 echo "Running self-host tests against $(planck --help | head -n 1 | xargs echo -n)"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 lein with-profile +self-host tach planck self-host-test-build
