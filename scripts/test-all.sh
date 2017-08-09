@@ -25,9 +25,7 @@ lein with-profile +clojure17 test
 echo
 echo "Running self-host tests against $(planck --help | head -n 1 | xargs echo -n)"
 echo "-----------------------------------------------------------------------------------------------------------------------"
-echo "Skipping due to https://github.com/mfikes/planck/issues/532"
-echo
-#lein with-profile +self-host tach planck self-host-test-build
+lein with-profile +self-host tach planck self-host-test-build
 
 echo "Running self-host tests against $(lumo --help | head -n 1 | xargs echo -n)"
 echo "-----------------------------------------------------------------------------------------------------------------------"
