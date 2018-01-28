@@ -1,6 +1,5 @@
 (ns env-config.impl.report
-  (:require [clojure.string :as string]
-            [env-config.impl.logging :as logging]))
+  (:require [env-config.impl.logging :as logging]))
 
 (def ^:dynamic *message-prefix* "env-config: ")
 (def ^:dynamic *reports* nil)                                                                                                 ; should be bound if reporting is desired

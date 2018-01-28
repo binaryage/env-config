@@ -1,6 +1,5 @@
 (ns env-config.impl.coerce
-  (:require [clojure.string :as string]
-            [env-config.impl.types :as t :refer [coerced? get-value]]
+  (:require [env-config.impl.types :as t :refer [coerced? get-value]]
             [env-config.impl.macros :refer [try* catch-all]]
             [env-config.impl.report :as report]
             [env-config.impl.helpers :refer [dissoc-in]]

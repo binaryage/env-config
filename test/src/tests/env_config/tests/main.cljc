@@ -1,6 +1,5 @@
 (ns env-config.tests.main
   (:require [clojure.test :refer [deftest testing is are]]
-            [clojure.string :as string]
             [env-config.core :refer [read-config coerce-config make-config
                                      make-config-with-logging default-coercers]]
             [env-config.impl.types :refer [->Coerced]]))
