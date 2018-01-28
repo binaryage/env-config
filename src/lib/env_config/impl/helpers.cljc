@@ -3,7 +3,7 @@
 ; don't want to bring full medley dependency
 ; https://github.com/weavejester/medley/blob/d8be5e2c45c61f4846953a5187e623e0ebe800f0/src/medley/core.cljc#L11
 (defn dissoc-in
-  "Dissociate a value in a nested assocative structure, identified by a sequence
+  "Dissociate a value in a nested associative structure, identified by a sequence
   of keys. Any collections left empty by the operation will be dissociated from
   their containing structures."
   [m ks]
