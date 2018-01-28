@@ -5,6 +5,9 @@
                                      make-config-with-logging default-coercers]]
             [env-config.impl.types :refer [->Coerced]]))
 
+#?(:cljs (println "ClojureScript version:" *clojurescript-version*)
+   :clj (println "Clojure version:" (clojure-version)))
+
 (deftest test-reading
   (testing "basic configs"
     (let [vars {"MY-PROJECT/A"       "s"

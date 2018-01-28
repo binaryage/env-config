@@ -1,3 +1,4 @@
+(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.9.946"))
 (defproject binaryage/env-config "0.2.2"
   :description "Clojure(Script) library for config map overrides via environment variables."
   :url "https://github.com/binaryage/env-config"
@@ -9,7 +10,7 @@
 
   :dependencies [[org.clojure/clojure "1.9.0" :scope "provided"]
                  [org.clojure/tools.reader "1.2.1"]
-                 [org.clojure/clojurescript "1.9.946" :scope "test"]
+                 [org.clojure/clojurescript ~clojurescript-version :scope "test"]
                  [org.clojure/tools.logging "0.4.0" :scope "test"]]
 
   :clean-targets ^{:protect false} ["target"

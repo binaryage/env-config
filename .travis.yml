@@ -19,4 +19,6 @@ before_script:
 - nvm install node
 - nvm use node
 - npm install -g lumo-cljs
+before_install:
+- curl -sSL https://raw.githubusercontent.com/cljs-oss/canary/master/scripts/install-canary.sh | bash
 script: lein test-all
